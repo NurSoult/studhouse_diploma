@@ -1,7 +1,7 @@
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from diploma.auth.exceptions import UserNotActive, UserNotFound, UserCredentialsError
-from diploma.auth.models import User
+from authenticate.exceptions import UserNotActive, UserNotFound, UserCredentialsError
+from authenticate.models import User
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
