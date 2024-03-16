@@ -6,7 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import UserRole, User, UserInfo
 from .serializers.jwt import CustomTokenObtainPairSerializer
-from .serializers.user import UserSerializer, UserDeleteSerializer
+from .serializers.user import UserSerializer, UserDeleteSerializer, UserCreateSerializer, UserUpdateSerializer
 from .serializers.user_info import UserInfoSerializer
 from .serializers.user_role import UserRoleSerializer
 from .services.user import UserCreateService, UserUpdateService
@@ -25,16 +25,23 @@ class UserRoleView(viewsets.ModelViewSet):
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    http_method_names = ['get', 'post', 'put', 'delete']
+    http_method_names = ['get', 'post', 'patch', 'delete']
     create_service = UserCreateService
     update_service = UserUpdateService
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UserCreateSerializer
+        elif self.action == 'partial_update':
+            return UserUpdateSerializer
+        return UserSerializer
 
     def create(self, request, *args, **kwargs):
         new_user = self.create_service().user_create(request)
 
         return new_user
 
-    def update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs):
         user = self.update_service().user_update(request, *args, **kwargs)
 
         return user
