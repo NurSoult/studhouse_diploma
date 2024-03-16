@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile-dev
+    container_name: backend
+    restart: always
+    env_file:
+      - envs/.env.backend.dev
+    volumes:
+      - ../..:/app
+      - static:/app/static
+      - media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python manage.py runserver 0.0.0.0:8000
+
+  db:
+    container_name: db
+    image: postgres:15.2-alpine
+    restart: always
+    env_file:
+      - envs/.env.db.dev
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q" ]
+    ports:
+      - "5432:5432"
+    volumes:
+      - 'db_data:/var/lib/postgresql/data'
+
+volumes:
+  db_data:
+  static:
+  media:

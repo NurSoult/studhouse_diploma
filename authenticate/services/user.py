@@ -8,33 +8,26 @@ from ..serializers.user import UserSerializer, UserInfoSerializer, UserUpdateSer
 class UserCreateService:
     @staticmethod
     def user_create(request):
-        request_data = request.data.copy()
+        role = request.data.get('role')
+        full_name = request.data.get('full_name')
+        login = request.data.get('login')
+        password = request.data.get('password')
+
         try:
-            request.data['role'] = UserRole.objects.get(id=request_data.pop('role')).id
+            role = UserRole.objects.get(id=role)
         except UserRole.DoesNotExist:
-            return Response({'message': 'Роль не найден!'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'Role not found'}, status=status.HTTP_403_FORBIDDEN)
 
-        user_serializer = UserCreateSerializer(data=request_data, partial=True)
+        user_serializer = UserCreateSerializer(data=request.data)
         user_serializer.is_valid(raise_exception=True)
-        user = User.objects.create_user(**user_serializer.validated_data)
+        user = user_serializer.save()
 
-        user.role = UserRole.objects.get(id=request.data['role'])
-        user.is_active = False
-        user.set_password(request.data['password'])
-
+        user.set_password(password)
         user.save()
 
-        user_info = UserInfo.objects.filter(user=user).first()
-        if user_info:
-            pass
-        else:
-            user_info = UserInfo.objects.create(
-                user=user,
-            )
+        UserInfo.objects.create(user=user)
 
-        new_serializer = UserSerializer(user)
-
-        return Response(new_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
     @staticmethod
     def user_info_create(request):

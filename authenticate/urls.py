@@ -1,7 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from .views import UserRoleView, UserView, UserInfoView
 
-
 router = DefaultRouter()
 
 router.register("role", UserRoleView, basename="role")

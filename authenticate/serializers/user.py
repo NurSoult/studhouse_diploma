@@ -21,13 +21,17 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'role', 'login', 'full_name']
+        fields = ['id', 'role', 'login', 'full_name', 'password']
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=False)
+    contacts = serializers.CharField(required=False)
+    photo_avatar = serializers.ImageField(required=False)
+
     class Meta:
         model = User
-        fields = ['id', 'role', 'login', 'full_name']
+        fields = ['id', 'role', 'login', 'full_name', 'email', 'contacts', 'photo_avatar', 'is_active', 'is_deleted']
 
 
 class UserDeleteSerializer(serializers.ModelSerializer):
