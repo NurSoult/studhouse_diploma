@@ -18,9 +18,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh -c "/entrypoint.sh"
 
   db:
+    build:
+      context: ../..
+      dockerfile: docker/dev/Dockerfile-db-dev
     container_name: db
     image: postgres:15.2-alpine
     restart: always
@@ -30,6 +33,8 @@ services:
       test: [ "CMD", "pg_isready", "-q" ]
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - 'db_data:/var/lib/postgresql/data'
 

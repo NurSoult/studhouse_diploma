@@ -17,7 +17,7 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN python manage.py makemigrations
-RUN python manage.py migrate
+COPY ./docker/dev/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-RUN python manage.py runserver
+ENTRYPOINT ["/entrypoint.sh"]

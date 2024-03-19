@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PARENT_DIR = Path(__file__).resolve().parent.parent.parent
 
 
-environ.Env.read_env(os.path.join(PARENT_DIR, '.envs/.django'))
+environ.Env.read_env(os.path.join(BASE_DIR, 'docker/dev/envs/.env.backend.dev'))
 
 SECRET_KEY = env('SECRET_KEY')
 
@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'diploma.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
@@ -120,7 +120,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
