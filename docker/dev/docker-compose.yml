@@ -32,7 +32,7 @@ services:
     healthcheck:
       test: [ "CMD", "pg_isready", "-q" ]
     ports:
-      - "5432:5432"
+      - "7772:5432"
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:

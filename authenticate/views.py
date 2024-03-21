@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -16,12 +17,27 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(summary='Get all user roles', description='Get all user roles', tags=['user role'], responses={200: UserRoleSerializer(many=True)}),
+    retrieve=extend_schema(summary='Get user role by id', description='Get user role by id', tags=['user role']),
+    create=extend_schema(summary='Create a new user role', description='Create a new user role', tags=['user role']),
+    update=extend_schema(summary='Update user role', description='Update user role', tags=['user role']),
+    destroy=extend_schema(summary='Delete user role', description='Delete user role', tags=['user role'])
+)
 class UserRoleView(viewsets.ModelViewSet):
     queryset = UserRole.objects.all()
     serializer_class = UserRoleSerializer
     http_method_names = ['get', 'post', 'put', 'delete']
 
 
+@extend_schema_view(
+    list=extend_schema(summary='Get all users', description='Get all users', tags=['user'], responses={200: UserSerializer(many=True)}),
+    retrieve=extend_schema(summary='Get user by id', description='Get user by id', tags=['user']),
+    create=extend_schema(summary='Create a new user', description='Create a new user', tags=['user']),
+    partial_update=extend_schema(summary='Update user', description='Update user', tags=['user']),
+    destroy=extend_schema(summary='Delete user', description='Delete user', tags=['user']),
+    delete_request_user=extend_schema(summary='Delete request user', description='Delete request user', tags=['user'])
+)
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -57,6 +73,13 @@ class UserView(viewsets.ModelViewSet):
         return Response({'message': 'User deleted successfully'})
 
 
+@extend_schema_view(
+    list=extend_schema(summary='Get all user info', description='Get all user info', tags=['user info'], responses={200: UserInfoSerializer(many=True)}),
+    retrieve=extend_schema(summary='Get user info by id', description='Get user info by id', tags=['user info']),
+    create=extend_schema(summary='Create a new user info', description='Create a new user info', tags=['user info']),
+    update=extend_schema(summary='Update user info', description='Update user info', tags=['user info']),
+    destroy=extend_schema(summary='Delete user info', description='Delete user info', tags=['user info'])
+)
 class UserInfoView(viewsets.ModelViewSet):
     queryset = UserInfo.objects.all()
     serializer_class = UserInfoSerializer
