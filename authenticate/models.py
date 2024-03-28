@@ -88,6 +88,9 @@ class UserInfo(models.Model):
     photo_avatar = models.ImageField(upload_to='user/avatar/', null=True, blank=True)
     contacts = models.CharField(max_length=255, null=True)
     email = models.CharField(max_length=255, null=True)
+    birthDate = models.DateField(null=True)
+    address = models.CharField(max_length=255, null=True)
+    imagePaths = models.JSONField(null=True)
 
     def __str__(self):
         try:
