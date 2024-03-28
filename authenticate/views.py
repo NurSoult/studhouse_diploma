@@ -36,6 +36,7 @@ class UserRoleView(viewsets.ModelViewSet):
     create=extend_schema(summary='Create a new user', description='Create a new user', tags=['user']),
     partial_update=extend_schema(summary='Update user', description='Update user', tags=['user']),
     destroy=extend_schema(summary='Delete user', description='Delete user', tags=['user']),
+    get_request_user=extend_schema(summary='Get request user', description='Get request user', tags=['user']),
     delete_request_user=extend_schema(summary='Delete request user', description='Delete request user', tags=['user'])
 )
 class UserView(viewsets.ModelViewSet):

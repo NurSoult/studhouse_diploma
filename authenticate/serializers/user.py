@@ -28,10 +28,13 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=False)
     contacts = serializers.CharField(required=False)
     photo_avatar = serializers.ImageField(required=False)
+    birthDate = serializers.DateField(required=False)
+    address = serializers.CharField(required=False)
+    imagePaths = serializers.ListField(child=serializers.ImageField(), required=False)
 
     class Meta:
         model = User
-        fields = ['id', 'role', 'login', 'full_name', 'email', 'contacts', 'photo_avatar', 'is_active', 'is_deleted']
+        fields = ['id', 'role', 'login', 'full_name', 'email', 'contacts', 'photo_avatar', 'is_active', 'is_deleted', 'birthDate', 'address', 'imagePaths']
 
 
 class UserDeleteSerializer(serializers.ModelSerializer):
