@@ -62,6 +62,14 @@ class UserView(viewsets.ModelViewSet):
 
         return user
 
+    @action(["get"], detail=False, permission_classes=[IsAuthenticated], serializer_class=UserSerializer)
+    def get_request_user(self, request, *args, **kwargs):
+        print("request_user:", request.user)
+        user = User.objects.get(id=request.user.id)
+        user_serializer = UserSerializer(user)
+
+        return Response(user_serializer.data)
+
     @action(["post"], detail=False, permission_classes=[IsAuthenticated], serializer_class=UserDeleteSerializer)
     def delete_request_user(self, request, *args, **kwargs):
         user = User.objects.get(id=request.user.id)
