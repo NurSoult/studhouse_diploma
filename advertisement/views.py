@@ -30,6 +30,9 @@ class AdvertisementView(viewsets.ModelViewSet):
         except Advertisement.DoesNotExist:
             return Response({"message": "Advertisement not found."}, status=status.HTTP_400_BAD_REQUEST)
 
+        if AdvertisementFavorite.objects.filter(advertisement=advertisement, user=request.user).exists():
+            return Response({"message": "Advertisement already in favorites."}, status=status.HTTP_400_BAD_REQUEST)
+
         AdvertisementFavorite.objects.create(advertisement=advertisement, user=request.user)
 
         return Response({"message": "Advertisement added to favorites."}, status=status.HTTP_200_OK)
