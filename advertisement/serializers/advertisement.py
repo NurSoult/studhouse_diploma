@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from advertisement.models import Advertisement, AdvertisementImage
+from advertisement.models import Advertisement, AdvertisementImage, AdvertisementFavorite
 from authenticate.serializers.user import UserSerializer
 
 
@@ -66,3 +66,20 @@ class AdvertisementSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(str(e))
 
         return advertisement
+
+
+class AdvertisementFavoriteSerializer(serializers.ModelSerializer):
+    advertisement = AdvertisementSerializer(read_only=True)
+
+    class Meta:
+        model = AdvertisementFavorite
+        fields = ["advertisement"]
+
+
+class AdvertisementAddFavoriteSerializer(serializers.ModelSerializer):
+    advertisement = AdvertisementSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = AdvertisementFavorite
+        fields = ["advertisement", "user"]

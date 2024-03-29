@@ -56,3 +56,16 @@ class AdvertisementImage(models.Model):
         verbose_name = _("AdvertisementImage")
         verbose_name_plural = _("AdvertisementImages")
         db_table = 'advertisement_image'
+
+
+class AdvertisementFavorite(models.Model):
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.advertisement.title} - {self.user.login}'
+
+    class Meta:
+        verbose_name = _("Advertisement Favorite")
+        verbose_name_plural = _("Advertisement Favorites")
+        db_table = 'advertisement_favorite'
