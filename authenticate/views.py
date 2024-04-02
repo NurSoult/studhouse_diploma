@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema_view, extend_schema
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -7,10 +7,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import UserRole, User, UserInfo
 from .serializers.jwt import CustomTokenObtainPairSerializer
-from .serializers.user import UserSerializer, UserDeleteSerializer, UserCreateSerializer, UserUpdateSerializer
+from .serializers.user import UserSerializer, UserDeleteSerializer, UserCreateSerializer, UserUpdateSerializer, \
+    UserActivateSerializer, UserSendActivationCodeSerializer, UserResetPasswordSerializer, \
+    UserSendResetPasswordCodeSerializer, UserCheckResetCodeSerializer, AddAdditionalUserSerializer, \
+    AdditionalUserSerializer
 from .serializers.user_info import UserInfoSerializer
 from .serializers.user_role import UserRoleSerializer
-from .services.user import UserCreateService, UserUpdateService
+from .services.user import UserCreateService, UserUpdateService, UserActivateService, AddAdditionalUserService
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -37,7 +40,8 @@ class UserRoleView(viewsets.ModelViewSet):
     partial_update=extend_schema(summary='Update user', description='Update user', tags=['user']),
     destroy=extend_schema(summary='Delete user', description='Delete user', tags=['user']),
     get_request_user=extend_schema(summary='Get request user', description='Get request user', tags=['user']),
-    delete_request_user=extend_schema(summary='Delete request user', description='Delete request user', tags=['user'])
+    delete_request_user=extend_schema(summary='Delete request user', description='Delete request user', tags=['user'], responses={200: OpenApiResponse(description='User deleted successfully')}, request=UserDeleteSerializer),
+    add_additional_user=extend_schema(summary='Add additional user', description='Add additional user', tags=['user'], responses={201: AdditionalUserSerializer}, request=AdditionalUserSerializer),
 )
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -65,7 +69,6 @@ class UserView(viewsets.ModelViewSet):
 
     @action(["get"], detail=False, permission_classes=[IsAuthenticated], serializer_class=UserSerializer)
     def get_request_user(self, request, *args, **kwargs):
-        print("request_user:", request.user)
         user = User.objects.get(id=request.user.id)
         user_serializer = UserSerializer(user)
 
@@ -80,6 +83,42 @@ class UserView(viewsets.ModelViewSet):
         user.save()
 
         return Response({'message': 'User deleted successfully'})
+
+    @action(["post"], detail=False, permission_classes=[IsAuthenticated], serializer_class=AddAdditionalUserSerializer)
+    def add_additional_user(self, request, *args, **kwargs):
+        additional_user = AddAdditionalUserService().add_additional_user(request)
+
+        return additional_user
+
+    @action(["post"], detail=False, serializer_class=UserSendActivationCodeSerializer)
+    def send_activation_code(self, request, *args, **kwargs):
+        activate_user = UserActivateService().send_activation_code(request)
+
+        return activate_user
+
+    @action(["post"], detail=False, serializer_class=UserActivateSerializer)
+    def activate_user(self, request, *args, **kwargs):
+        activate_user = UserActivateService().user_activate(request)
+
+        return activate_user
+
+    @action(["post"], detail=False, serializer_class=UserSendResetPasswordCodeSerializer)
+    def send_reset_password_code(self, request, *args, **kwargs):
+        reset_password = UserActivateService().send_reset_password_code(request)
+
+        return reset_password
+
+    @action(["post"], detail=False, serializer_class=UserCheckResetCodeSerializer)
+    def check_reset_password_code(self, request, *args, **kwargs):
+        reset_password = UserActivateService().check_reset_password_code(request)
+
+        return reset_password
+
+    @action(["post"], detail=False, serializer_class=UserResetPasswordSerializer)
+    def reset_password(self, request, *args, **kwargs):
+        reset_password = UserActivateService().reset_password(request)
+
+        return reset_password
 
 
 @extend_schema_view(

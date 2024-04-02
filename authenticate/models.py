@@ -91,6 +91,8 @@ class UserInfo(models.Model):
     birthDate = models.DateField(null=True)
     address = models.CharField(max_length=255, null=True)
     imagePaths = models.JSONField(null=True)
+    frontIDCard = models.ImageField(upload_to='user/id_card/', null=True, blank=True)
+    backIDCard = models.ImageField(upload_to='user/id_card/', null=True, blank=True)
 
     def __str__(self):
         try:
@@ -102,3 +104,18 @@ class UserInfo(models.Model):
         verbose_name = _("UserInfo")
         verbose_name_plural = _("UserInfo")
         db_table = 'user_info'
+
+
+class AdditionalUser(models.Model):
+    user = models.OneToOneField(User, null=False, on_delete=models.CASCADE, related_name='additional_user')
+    full_name = models.CharField(max_length=100, null=True)
+    who_is = models.CharField(max_length=100, null=True)
+    contacts = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return self.full_name
+
+    class Meta:
+        verbose_name = _("AdditionalUser")
+        verbose_name_plural = _("AdditionalUsers")
+        db_table = 'additional_user'

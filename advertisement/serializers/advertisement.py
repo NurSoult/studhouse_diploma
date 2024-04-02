@@ -6,6 +6,11 @@ from advertisement.models import Advertisement, AdvertisementImage, Advertisemen
 from authenticate.serializers.user import UserSerializer
 
 
+class AdvertisementOwnerSerializer(serializers.Serializer):
+    full_name = serializers.CharField(max_length=150)
+    phone_number = serializers.CharField(max_length=50)
+
+
 class AdvertisementImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdvertisementImage
@@ -28,6 +33,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         required=False
     )
     creationDate = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    owner = serializers.SerializerMethodField()
 
     @staticmethod
     def get_advertisement_images(obj) -> list:
@@ -36,11 +42,19 @@ class AdvertisementSerializer(serializers.ModelSerializer):
             return AdvertisementImageSerializer(images, many=True).data
         return []
 
+    @staticmethod
+    def get_owner(obj) -> dict:
+        return AdvertisementOwnerSerializer({
+            'full_name': obj.author.full_name,
+            'phone_number': obj.author.user_info.contacts
+        }).data
+
     class Meta:
         model = Advertisement
         fields = (
-            'id', 'title', 'description', 'price', 'location', 'advertisement_images', 'author', 'creationDate',
-            'floor', 'typeOfHouse', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'uploaded_images'
+            'id', 'title', 'description', 'price', 'location', 'advertisement_images', 'paymentTime', 'owner', 'creationDate',
+            'floor', 'typeOfHouse', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
+            'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'uploaded_images'
         )
 
     def create(self, validated_data):
