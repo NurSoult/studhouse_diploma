@@ -13,9 +13,13 @@ class AdvertisementView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def create(self, request, *args, **kwargs):
-        print("request_user:", request.user.id)
         request.data['author'] = request.user.id
-        return super().create(request, *args, **kwargs)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=AdvertisementFavoriteSerializer)
     def get_favorite_advertisements(self, request, *args, **kwargs) -> Response:
