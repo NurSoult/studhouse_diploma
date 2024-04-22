@@ -24,6 +24,7 @@ urlpatterns = [
     path(f'{api_version}auth/', include('authenticate.urls')),
     path(f'{api_version}userfeed/', include('userfull.urls')),
     path(f'{api_version}advertisement/', include('advertisement.urls')),
+    path(f'{api_version}chat/', include('chat.urls')),
 ]
 
 
