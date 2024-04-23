@@ -97,3 +97,7 @@ class AdvertisementAddFavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdvertisementFavorite
         fields = ["advertisement", "user"]
+
+
+class CreateAdvertisementAddFavoriteSerializer(serializers.Serializer):
+    advertisement = serializers.IntegerField()

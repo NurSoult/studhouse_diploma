@@ -1,12 +1,22 @@
+from drf_spectacular.utils import extend_schema, OpenApiResponse, extend_schema_view
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from advertisement.models import Advertisement, AdvertisementFavorite
 from advertisement.serializers.advertisement import AdvertisementSerializer, AdvertisementAddFavoriteSerializer, \
-    AdvertisementFavoriteSerializer
+    AdvertisementFavoriteSerializer, CreateAdvertisementAddFavoriteSerializer
 
 
+@extend_schema_view(
+    list=extend_schema(summary='Get all advertisements', description='Get all advertisements', tags=['advertisement'], responses={200: AdvertisementSerializer(many=True)}),
+    retrieve=extend_schema(summary='Get advertisement by id', description='Get advertisement by id', tags=['advertisement']),
+    create=extend_schema(summary='Create a new advertisement', description='Create a new advertisement', tags=['advertisement']),
+    update=extend_schema(summary='Update advertisement', description='Update advertisement', tags=['advertisement']),
+    destroy=extend_schema(summary='Delete advertisement', description='Delete advertisement', tags=['advertisement']),
+    get_favorite_advertisements=extend_schema(summary='Get favorite advertisements', description='Get favorite advertisements', tags=['advertisement'], responses={200: AdvertisementFavoriteSerializer(many=True)}),
+    add_to_favorite=extend_schema(summary='Add advertisement to favorite', description='Add advertisement to favorite', tags=['advertisement'], responses={200: OpenApiResponse(description='Advertisement added to favorites')}, request=CreateAdvertisementAddFavoriteSerializer)
+)
 class AdvertisementView(viewsets.ModelViewSet):
     queryset = Advertisement.objects.all()
     serializer_class = AdvertisementSerializer
