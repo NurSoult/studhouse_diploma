@@ -12,10 +12,6 @@ from .serializers import ChatSerializer, ChatMessageSerializer
 from django.db.models import Prefetch
 
 
-@extend_schema(
-    list=extend_schema(summary='Get all chats', description='Get all chats', tags=['chat'], responses={200: ChatSerializer(many=True)}),
-    retrieve=extend_schema(summary='Get chat by id', description='Get chat by id', tags=['chat']),
-)
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
