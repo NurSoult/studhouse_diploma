@@ -42,6 +42,12 @@ class UserRoleView(viewsets.ModelViewSet):
     get_request_user=extend_schema(summary='Get request user', description='Get request user', tags=['user']),
     delete_request_user=extend_schema(summary='Delete request user', description='Delete request user', tags=['user'], responses={200: OpenApiResponse(description='User deleted successfully')}, request=UserDeleteSerializer),
     add_additional_user=extend_schema(summary='Add additional user', description='Add additional user', tags=['user'], responses={201: AdditionalUserSerializer}, request=AdditionalUserSerializer),
+
+    send_activation_code=extend_schema(summary='Send activation code', description='Send activation code', tags=['auth'], responses={200: OpenApiResponse(description='Activation code sent successfully')}, request=UserSendActivationCodeSerializer),
+    activate_user=extend_schema(summary='Activate user', description='Activate user', tags=['auth'], responses={200: OpenApiResponse(description='User activated successfully')}, request=UserActivateSerializer),
+    send_reset_password_code=extend_schema(summary='Send reset password code', description='Send reset password code', tags=['auth'], responses={200: OpenApiResponse(description='Reset password code sent successfully')}, request=UserSendResetPasswordCodeSerializer),
+    check_reset_password_code=extend_schema(summary='Check reset password code', description='Check reset password code', tags=['auth'], responses={200: OpenApiResponse(description='Reset password code is valid')}, request=UserCheckResetCodeSerializer),
+    reset_password=extend_schema(summary='Reset password', description='Reset password', tags=['auth'], responses={200: OpenApiResponse(description='Password reset successfully')}, request=UserResetPasswordSerializer)
 )
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()

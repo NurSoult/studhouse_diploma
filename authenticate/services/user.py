@@ -19,6 +19,10 @@ class UserCreateService:
             with transaction.atomic():
                 user_serializer = UserCreateSerializer(data=request.data)
                 user_serializer.is_valid(raise_exception=True)
+
+                if User.objects.filter(login=user_serializer.validated_data['login']).exists():
+                    return Response({'error': 'User with this login already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
                 user = User.objects.create_user(**user_serializer.validated_data)
 
                 user.is_active = False

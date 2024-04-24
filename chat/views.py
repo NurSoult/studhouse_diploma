@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.utils import timezone
 from django.utils.timezone import now
+from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
@@ -11,13 +12,16 @@ from .serializers import ChatSerializer, ChatMessageSerializer
 from django.db.models import Prefetch
 
 
+@extend_schema(
+    list=extend_schema(summary='Get all chats', description='Get all chats', tags=['chat'], responses={200: ChatSerializer(many=True)}),
+    retrieve=extend_schema(summary='Get chat by id', description='Get chat by id', tags=['chat']),
+)
 class ChatViewSet(viewsets.ModelViewSet):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
-        # Логика для создания чата
         interlocutor_id = request.data.get('interlocutor')
         chat = Chat.objects.create(author=request.user, interlocutor_id=interlocutor_id)
         return Response(self.get_serializer(chat).data)
