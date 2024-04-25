@@ -21,6 +21,7 @@ urlpatterns = [
     path(f'{api_version}api-auth/', include('rest_framework.urls')),
     path(f'{api_version}', include([re_path(r"^jwt/create/?", CustomTokenObtainPairView.as_view(), name="jwt-create")])),
 
+    path(f'{api_version}', include('main.urls')),
     path(f'{api_version}auth/', include('authenticate.urls')),
     path(f'{api_version}userfeed/', include('userfull.urls')),
     path(f'{api_version}advertisement/', include('advertisement.urls')),
