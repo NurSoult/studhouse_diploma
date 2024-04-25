@@ -34,6 +34,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     )
     creationDate = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     owner = serializers.SerializerMethodField()
+    price = serializers.DecimalField(decimal_places=2, max_digits=10)
 
     @staticmethod
     def get_advertisement_images(obj) -> list:
