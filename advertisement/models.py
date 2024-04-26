@@ -24,6 +24,8 @@ class Advertisement(models.Model):
     floor = models.IntegerField()
     typeOfHouse = models.CharField(max_length=255)
     numberOfRooms = models.IntegerField()
+    count_bedrooms = models.IntegerField()
+    count_bathrooms = models.IntegerField()
     square = models.IntegerField()
     isSold = models.BooleanField(default=False)
     isArchived = models.BooleanField(default=False)

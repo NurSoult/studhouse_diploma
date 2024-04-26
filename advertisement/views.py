@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from advertisement.models import Advertisement, AdvertisementFavorite
 from advertisement.serializers.advertisement import AdvertisementSerializer, AdvertisementAddFavoriteSerializer, \
     AdvertisementFavoriteSerializer, CreateAdvertisementAddFavoriteSerializer
+from authenticate.permissions import IsStudent, IsLandlord
 
 
 @extend_schema_view(
@@ -23,7 +24,11 @@ class AdvertisementView(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     def create(self, request, *args, **kwargs):
-        request.data['author'] = request.user.id
+        author = request.user.id
+        if IsLandlord().has_permission(request, self):
+            request.data['author'] = author
+        else:
+            return Response({"message": "Only landlords can create advertisements."}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

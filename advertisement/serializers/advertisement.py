@@ -34,7 +34,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     )
     creationDate = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     owner = serializers.SerializerMethodField()
-    price = serializers.DecimalField(decimal_places=2, max_digits=10)
+    price = serializers.IntegerField()
 
     @staticmethod
     def get_advertisement_images(obj) -> list:
@@ -54,7 +54,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         model = Advertisement
         fields = (
             'id', 'title', 'author', 'description', 'price', 'location', 'advertisement_images', 'paymentTime', 'owner', 'creationDate',
-            'floor', 'typeOfHouse', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
+            'floor', 'typeOfHouse', 'count_bedrooms', 'count_bathrooms', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
             'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'uploaded_images'
         )
 
