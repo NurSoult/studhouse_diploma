@@ -41,7 +41,7 @@ class RelocationSerializer(serializers.ModelSerializer):
     price = serializers.IntegerField()
 
     @staticmethod
-    def get_advertisement_images(obj) -> list:
+    def get_relocation_images(obj) -> list:
         images = RelocationImage.objects.filter(relocation=obj)
         if images:
             return RelocationImageSerializer(images, many=True).data
@@ -57,7 +57,7 @@ class RelocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relocation
         fields = (
-            'id', 'title', 'author', 'description', 'price', 'location', 'advertisement_images', 'paymentTime', 'owner', 'creationDate',
+            'id', 'title', 'author', 'description', 'price', 'location', 'relocation_images', 'paymentTime', 'owner', 'creationDate',
             'floor', 'typeOfHouse', 'max_people_count', 'current_people_count', 'count_bedrooms', 'count_bathrooms', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
             'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'uploaded_images'
         )
