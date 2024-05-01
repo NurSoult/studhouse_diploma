@@ -1,4 +1,5 @@
 import os
+
 import environ
 
 from datetime import timedelta
@@ -6,6 +7,8 @@ from pathlib import Path
 
 
 env = environ.Env()
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'diploma.settings')
+os.environ.setdefault('DJANGO_ALLOW_ASYNC_UNSAFE', 'true')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -76,7 +79,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'diploma.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

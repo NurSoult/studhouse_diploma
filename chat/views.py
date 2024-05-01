@@ -1,8 +1,6 @@
 from datetime import timedelta
 
 from django.utils import timezone
-from django.utils.timezone import now
-from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
