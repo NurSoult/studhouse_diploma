@@ -85,3 +85,9 @@ class RelocationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(str(e))
 
         return relocation
+
+
+class ReportSerializer(serializers.Serializer):
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    text = serializers.CharField(max_length=500)
+    date = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
