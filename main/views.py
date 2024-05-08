@@ -78,8 +78,8 @@ class RelocationViewSet(ModelViewSet):
     @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=RelocationSerializer)
     def get_my_relocations(self, request, *args, **kwargs) -> Response:
         my_relocations = Relocation.objects.filter(author=request.user)
-        response = [RelocationSerializer(relocation).data for relocation in my_relocations]
-        return Response(response, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(my_relocations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(

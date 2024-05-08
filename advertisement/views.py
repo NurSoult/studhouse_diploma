@@ -61,5 +61,5 @@ class AdvertisementView(viewsets.ModelViewSet):
     @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=AdvertisementSerializer)
     def get_my_advertisements(self, request, *args, **kwargs) -> Response:
         my_advertisements = Advertisement.objects.filter(author=request.user)
-        response = [AdvertisementSerializer(advertisement).data for advertisement in my_advertisements]
-        return Response(response, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(my_advertisements, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
