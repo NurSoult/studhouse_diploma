@@ -1,15 +1,17 @@
 from django.core.mail import send_mail
 from django.db import transaction
 from django.utils import timezone
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiResponse
 from rest_framework import permissions, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from authenticate.permissions import IsStudent
 from diploma.settings import EMAIL_HOST_USER
-from .models import Review, Relocation
-from .serializers import ReviewSerializer, RelocationSerializer, ReportSerializer
+from .models import Review, Relocation, RelocationFavorite
+from .serializers import ReviewSerializer, RelocationSerializer, ReportSerializer, RelocationAddFavoriteSerializer, \
+    RelocationFavoriteSerializer, CreateRelocationAddFavoriteSerializer
 
 
 @extend_schema_view(
@@ -22,6 +24,16 @@ class ReviewViewSet(ModelViewSet):
     http_method_names = ['get', 'post']
 
 
+@extend_schema_view(
+    list=extend_schema(summary='Get all relocations', description='Get all relocations', tags=['relocation'], responses={200: RelocationSerializer(many=True)}),
+    create=extend_schema(summary='Create a new relocation', description='Create a new relocation', tags=['relocation'], responses={201: RelocationSerializer}),
+    update=extend_schema(summary='Update a relocation', description='Update a relocation', tags=['relocation'], responses={200: RelocationSerializer}),
+    partial_update=extend_schema(summary='Partially update a relocation', description='Partially update a relocation', tags=['relocation'], responses={200: RelocationSerializer}),
+    destroy=extend_schema(summary='Delete a relocation', description='Delete a relocation', tags=['relocation'], responses={204: None}),
+    get_favorite_relocations=extend_schema(summary='Get favorite relocations', description='Get favorite relocations', tags=['relocation'], responses={200: RelocationFavoriteSerializer(many=True)}),
+    add_to_favorite=extend_schema(summary='Add relocation to favorite', description='Add relocation to favorite', tags=['relocation'], responses={200: OpenApiResponse(description='Relocation added to favorites')}, request=CreateRelocationAddFavoriteSerializer),
+    get_my_relocations=extend_schema(summary='Get my relocations', description='Get my relocations', tags=['relocation'], responses={200: RelocationSerializer(many=True)})
+)
 class RelocationViewSet(ModelViewSet):
     queryset = Relocation.objects.all()
     serializer_class = RelocationSerializer
@@ -39,6 +51,34 @@ class RelocationViewSet(ModelViewSet):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated],
+            serializer_class=RelocationFavoriteSerializer)
+    def get_favorite_relocations(self, request, *args, **kwargs) -> Response:
+        favorite_relocations = RelocationFavorite.objects.filter(user=request.user)
+        response = [RelocationSerializer(favorite.relocation).data for favorite in favorite_relocations]
+        return Response(response, status=status.HTTP_200_OK)
+
+    @action(["post"], detail=False, permission_classes=[permissions.IsAuthenticated],
+            serializer_class=RelocationAddFavoriteSerializer)
+    def add_to_favorite(self, request, *args, **kwargs):
+        try:
+            relocation = Relocation.objects.get(id=request.data['relocation'])
+        except Relocation.DoesNotExist:
+            return Response({"message": "Relocation not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if RelocationFavorite.objects.filter(relocation=relocation, user=request.user).exists():
+            return Response({"message": "Relocation already in favorites."}, status=status.HTTP_400_BAD_REQUEST)
+
+        RelocationFavorite.objects.create(relocation=relocation, user=request.user)
+
+        return Response({"message": "Relocation added to favorites."}, status=status.HTTP_200_OK)
+
+    @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=RelocationSerializer)
+    def get_my_relocations(self, request, *args, **kwargs) -> Response:
+        my_relocations = Relocation.objects.filter(author=request.user)
+        response = [RelocationSerializer(relocation).data for relocation in my_relocations]
+        return Response(response, status=status.HTTP_200_OK)
 
 
 @extend_schema_view(

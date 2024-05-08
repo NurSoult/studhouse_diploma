@@ -51,6 +51,9 @@ class Relocation(models.Model):
     nearbyHospital = models.BooleanField(default=False)
     nearbySchool = models.BooleanField(default=False)
     nearbyGym = models.BooleanField(default=False)
+    university = models.CharField(max_length=255)
+    course = models.IntegerField()
+    profession = models.CharField(max_length=255)
 
 
 class RelocationImage(models.Model):
@@ -79,3 +82,16 @@ class RelocationImage(models.Model):
         verbose_name = _("Relocation image")
         verbose_name_plural = _("Relocation images")
         db_table = 'relocation_image'
+
+
+class RelocationFavorite(models.Model):
+    relocation = models.ForeignKey(Relocation, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.relocation.title} - {self.user.login}'
+
+    class Meta:
+        verbose_name = _("Relocation Favorite")
+        verbose_name_plural = _("Relocation Favorites")
+        db_table = 'relocation_favorite'

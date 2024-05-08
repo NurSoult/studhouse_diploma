@@ -1,7 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
-from .models import Review, RelocationImage, Relocation
+
+from authenticate.serializers.user import UserSerializer
+from .models import Review, RelocationImage, Relocation, RelocationFavorite
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -57,9 +59,8 @@ class RelocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relocation
         fields = (
-            'id', 'title', 'author', 'description', 'price', 'location', 'relocation_images', 'paymentTime', 'owner', 'creationDate',
-            'floor', 'typeOfHouse', 'max_people_count', 'current_people_count', 'count_bedrooms', 'count_bathrooms', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
-            'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'uploaded_images'
+            'id', 'title', 'author', 'description', 'price', 'location', 'relocation_images', 'paymentTime', 'owner', 'creationDate', 'floor', 'typeOfHouse', 'max_people_count', 'current_people_count', 'count_bedrooms', 'count_bathrooms', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
+            'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'university', 'course', 'profession', 'uploaded_images'
         )
 
     def create(self, validated_data):
@@ -85,6 +86,27 @@ class RelocationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(str(e))
 
         return relocation
+
+
+class RelocationFavoriteSerializer(serializers.ModelSerializer):
+    relocation = RelocationSerializer(read_only=True)
+
+    class Meta:
+        model = RelocationFavorite
+        fields = ["relocation"]
+
+
+class RelocationAddFavoriteSerializer(serializers.ModelSerializer):
+    relocation = RelocationSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = RelocationFavorite
+        fields = ["relocation", "user"]
+
+
+class CreateRelocationAddFavoriteSerializer(serializers.Serializer):
+    relocation = serializers.IntegerField()
 
 
 class ReportSerializer(serializers.Serializer):

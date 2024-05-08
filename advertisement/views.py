@@ -16,7 +16,8 @@ from authenticate.permissions import IsStudent, IsLandlord
     update=extend_schema(summary='Update advertisement', description='Update advertisement', tags=['advertisement']),
     destroy=extend_schema(summary='Delete advertisement', description='Delete advertisement', tags=['advertisement']),
     get_favorite_advertisements=extend_schema(summary='Get favorite advertisements', description='Get favorite advertisements', tags=['advertisement'], responses={200: AdvertisementFavoriteSerializer(many=True)}),
-    add_to_favorite=extend_schema(summary='Add advertisement to favorite', description='Add advertisement to favorite', tags=['advertisement'], responses={200: OpenApiResponse(description='Advertisement added to favorites')}, request=CreateAdvertisementAddFavoriteSerializer)
+    add_to_favorite=extend_schema(summary='Add advertisement to favorite', description='Add advertisement to favorite', tags=['advertisement'], responses={200: OpenApiResponse(description='Advertisement added to favorites')}, request=CreateAdvertisementAddFavoriteSerializer),
+    get_my_advertisements=extend_schema(summary='Get my advertisements', description='Get my advertisements', tags=['advertisement'], responses={200: AdvertisementSerializer(many=True)}),
 )
 class AdvertisementView(viewsets.ModelViewSet):
     queryset = Advertisement.objects.all()
@@ -55,3 +56,9 @@ class AdvertisementView(viewsets.ModelViewSet):
         AdvertisementFavorite.objects.create(advertisement=advertisement, user=request.user)
 
         return Response({"message": "Advertisement added to favorites."}, status=status.HTTP_200_OK)
+
+    @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=AdvertisementSerializer)
+    def get_my_advertisements(self, request, *args, **kwargs) -> Response:
+        my_advertisements = Advertisement.objects.filter(author=request.user)
+        response = [AdvertisementSerializer(advertisement).data for advertisement in my_advertisements]
+        return Response(response, status=status.HTTP_200_OK)
