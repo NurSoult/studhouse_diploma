@@ -35,7 +35,7 @@ class ReviewViewSet(ModelViewSet):
     get_my_relocations=extend_schema(summary='Get my relocations', description='Get my relocations', tags=['relocation'], responses={200: RelocationSerializer(many=True)})
 )
 class RelocationViewSet(ModelViewSet):
-    queryset = Relocation.objects.all()
+    queryset = Relocation.objects.order_by('-creationDate')
     serializer_class = RelocationSerializer
     permission_classes = [permissions.IsAuthenticated]
 

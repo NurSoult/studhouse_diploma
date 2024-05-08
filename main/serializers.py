@@ -41,6 +41,7 @@ class RelocationSerializer(serializers.ModelSerializer):
     creationDate = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     owner = serializers.SerializerMethodField()
     price = serializers.IntegerField()
+    is_favorite = serializers.SerializerMethodField()
 
     @staticmethod
     def get_relocation_images(obj) -> list:
@@ -56,11 +57,14 @@ class RelocationSerializer(serializers.ModelSerializer):
             'phone_number': obj.author.user_info.contacts
         }).data
 
+    def get_is_favorite(self, obj) -> bool:
+        return RelocationFavorite.objects.filter(relocation=obj, user=self.context['request'].user).exists()
+
     class Meta:
         model = Relocation
         fields = (
             'id', 'title', 'author', 'description', 'price', 'location', 'relocation_images', 'paymentTime', 'owner', 'creationDate', 'floor', 'typeOfHouse', 'max_people_count', 'current_people_count', 'count_bedrooms', 'count_bathrooms', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
-            'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'university', 'course', 'profession', 'uploaded_images'
+            'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'university', 'course', 'profession', 'is_favorite', 'uploaded_images'
         )
 
     def create(self, validated_data):

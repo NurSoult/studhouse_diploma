@@ -35,6 +35,7 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     creationDate = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     owner = serializers.SerializerMethodField()
     price = serializers.IntegerField()
+    is_favorite = serializers.SerializerMethodField()
 
     @staticmethod
     def get_advertisement_images(obj) -> list:
@@ -50,10 +51,13 @@ class AdvertisementSerializer(serializers.ModelSerializer):
             'phone_number': obj.author.user_info.contacts
         }).data
 
+    def get_is_favorite(self, obj) -> bool:
+        return AdvertisementFavorite.objects.filter(advertisement=obj, user=self.context['request'].user).exists()
+
     class Meta:
         model = Advertisement
         fields = (
-            'id', 'title', 'author', 'description', 'price', 'location', 'advertisement_images', 'paymentTime', 'owner', 'creationDate',
+            'id', 'title', 'author', 'description', 'price', 'location', 'advertisement_images', 'paymentTime', 'owner', 'creationDate', 'is_favorite',
             'floor', 'typeOfHouse', 'count_bedrooms', 'count_bathrooms', 'numberOfRooms', 'square', 'isSold', 'isArchived', 'haveWifi', 'haveTV', 'haveWashingMachine',
             'haveParking', 'haveConditioner', 'nearbyTradeCenter', 'nearbyHospital', 'nearbySchool', 'nearbyGym', 'uploaded_images'
         )

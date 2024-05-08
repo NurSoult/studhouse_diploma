@@ -20,7 +20,7 @@ from authenticate.permissions import IsStudent, IsLandlord
     get_my_advertisements=extend_schema(summary='Get my advertisements', description='Get my advertisements', tags=['advertisement'], responses={200: AdvertisementSerializer(many=True)}),
 )
 class AdvertisementView(viewsets.ModelViewSet):
-    queryset = Advertisement.objects.all()
+    queryset = Advertisement.objects.order_by('-creationDate')
     serializer_class = AdvertisementSerializer
     permission_classes = [permissions.IsAuthenticated]
     
