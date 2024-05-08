@@ -37,11 +37,12 @@ class AdvertisementView(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=AdvertisementFavoriteSerializer)
+    @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=AdvertisementSerializer)
     def get_favorite_advertisements(self, request, *args, **kwargs) -> Response:
         favorite_advertisements = AdvertisementFavorite.objects.filter(user=request.user)
-        response = [AdvertisementSerializer(favorite.advertisement).data for favorite in favorite_advertisements]
-        return Response(response, status=status.HTTP_200_OK)
+        data = [advertisement.advertisement for advertisement in favorite_advertisements]
+        serializer = self.get_serializer(data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(["post"], detail=False, permission_classes=[permissions.IsAuthenticated], serializer_class=AdvertisementAddFavoriteSerializer)
     def add_to_favorite(self, request, *args, **kwargs):

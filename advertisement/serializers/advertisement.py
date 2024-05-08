@@ -52,7 +52,12 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         }).data
 
     def get_is_favorite(self, obj) -> bool:
-        return AdvertisementFavorite.objects.filter(advertisement=obj, user=self.context['request'].user).exists()
+        request = self.context.get('request')
+        print("request:", request)
+        if request:
+            is_favorite = AdvertisementFavorite.objects.filter(advertisement=obj, user=request.user).exists()
+            return is_favorite
+        return False
 
     class Meta:
         model = Advertisement

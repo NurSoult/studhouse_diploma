@@ -53,11 +53,12 @@ class RelocationViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(["get"], detail=False, permission_classes=[permissions.IsAuthenticated],
-            serializer_class=RelocationFavoriteSerializer)
+            serializer_class=RelocationSerializer)
     def get_favorite_relocations(self, request, *args, **kwargs) -> Response:
         favorite_relocations = RelocationFavorite.objects.filter(user=request.user)
-        response = [RelocationSerializer(favorite.relocation).data for favorite in favorite_relocations]
-        return Response(response, status=status.HTTP_200_OK)
+        data = [advertisement.relocation for advertisement in favorite_relocations]
+        serializer = self.get_serializer(data, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(["post"], detail=False, permission_classes=[permissions.IsAuthenticated],
             serializer_class=RelocationAddFavoriteSerializer)
